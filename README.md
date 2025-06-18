@@ -12,10 +12,11 @@ Hoy en día, muchos estudiantes tienen dificultades para organizar sus tareas y 
 El desarrollo se enfocará en una **aplicación web**, accesible desde cualquier navegador, sin necesidad de instalación. Esto permite que los estudiantes gestionen sus tareas y proyectos desde distintos dispositivos y lugares, favoreciendo el trabajo remoto y colaborativo.
 
 En futuras versiones, se podría evaluar el desarrollo de una **aplicación móvil** para ampliar el acceso y facilitar el uso desde smartphones o tablets.
+
 ---
 
-## *Thesina project - Bruno and Liendo
-## *Task and project management platform* ### *Task and project management platform* #### *Task and project management platform* ###### *Task and project management platform
+# *Thesina project - Bruno and Liendo*
+## *Task and project management platform* 
 
 ### 🧩 Problem solved by the application
 
@@ -29,9 +30,8 @@ The development will focus on a **web application**, accessible from any browser
 
 In future versions, the development of a **mobile application** could be evaluated to extend access and facilitate use from smartphones or tablets.
 
-Translated with DeepL.com (free version)
 ---
  
-### Integrantes:
+### Integrantes / members:
 ### Mateo Bruno Barberon - 48068748 - mbrunobarberon@escuelasproa.edu.ar -
 ### Santiago Nicolas liendo - 48671247 - snliendo@escuelasproa.edu.ar - 
