@@ -41,9 +41,12 @@ In future versions, the development of a **mobile application** could be evaluat
 ### Integrantes / members:
 ### Mateo Bruno Barberon - 48068748 - mbrunobarberon@escuelasproa.edu.ar -
 ### Santiago Nicolas liendo - 48671247 - snliendo@escuelasproa.edu.ar - 
-
+---
 ### Docente asesor / advisory teacher: 
 ### Bonzano Blas - bbonzano@escuelasproa.edu.ar
-
+---
+### Docente especialidad / Teacher speciality
+### Viviana Guillen - vaguillen@escuelasproa.edu.ar
+---
 ### Drive Carpeta / Drive File:
 https://drive.google.com/drive/folders/1WpxwWaLnxy0Ijp9ENfDgMsROwvwXk7Xw?usp=sharing
