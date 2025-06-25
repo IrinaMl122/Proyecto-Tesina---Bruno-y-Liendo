@@ -1,5 +1,5 @@
 # *Proyecto Tesina - Bruno y Liendo*
-## *Plataforma de gestion de tareas y proyectos*
+## *Plataforma de gestion de tareas y proyectos ESCALOR*
 
 ### 👻 Descripcion del proyecto
 El proyecto es una aplicacion web estilo Classroom y Drive donde se podran crear proyectos en los cuales dentro pueden crearse tareas para realizar, darles fechas limites, invitar colaboradores al proyecto, designarles tareas y otras multiples funciones para poder gestionar las tareas y proyectos de los estudiantes de una forma mas comoda y organizada.
