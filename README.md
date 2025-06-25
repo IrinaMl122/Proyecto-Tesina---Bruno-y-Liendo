@@ -12,7 +12,7 @@ Hoy en día, muchos estudiantes tienen dificultades para organizar sus tareas y 
 
 ### 💻 Plataforma elegida
 
-El desarrollo se enfocará en una **aplicación web** trabajada con HTML, PHP y CSS, accesible desde cualquier navegador, sin necesidad de instalación. Esto permite que los estudiantes gestionen sus tareas y proyectos desde distintos dispositivos y lugares, favoreciendo el trabajo remoto y colaborativo.
+El desarrollo se enfocará en una **aplicación web** trabajada con HTML y CSS, accesible desde cualquier navegador, sin necesidad de instalación. Esto permite que los estudiantes gestionen sus tareas y proyectos desde distintos dispositivos y lugares, favoreciendo el trabajo remoto y colaborativo.
 
 En futuras versiones, se podría evaluar el desarrollo de una **aplicación móvil** para ampliar el acceso y facilitar el uso desde smartphones o tablets.
 
@@ -32,7 +32,7 @@ Nowadays, many students find it difficult to organise their tasks and projects e
 
 ### 💻 Chosen platform
 
-The development will focus on a **web application** worked with HTML, PHP y CSS, accessible from any browser, with no installation required. This allows students to manage their tasks and projects from different devices and locations, favouring remote and collaborative work.
+The development will focus on a **web application** worked with HTML, y CSS, accessible from any browser, with no installation required. This allows students to manage their tasks and projects from different devices and locations, favouring remote and collaborative work.
 
 In future versions, the development of a **mobile application** could be evaluated to extend access and facilitate use from smartphones or tablets.
 
