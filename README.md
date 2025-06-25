@@ -1,7 +1,10 @@
 # *Proyecto Tesina - Bruno y Liendo*
 ## *Plataforma de gestion de tareas y proyectos*
 
-### 🧩 Problema que resuelve la aplicación
+### 👻 Descripcion del proyecto
+El proyecto es una aplicacion web estilo Classroom y Drive donde se podran crear proyectos en los cuales dentro pueden crearse tareas para realizar, darles fechas limites, invitar colaboradores al proyecto, designarles tareas y otras multiples funciones para poder gestionar las tareas y proyectos de los estudiantes de una forma mas comoda y organizada.
+
+### 🧩 Problema que resuelve la aplicación y objetivo
 
 Hoy en día, muchos estudiantes tienen dificultades para organizar sus tareas y proyectos de forma eficiente. Los métodos cotidianos pueden llevar a olvidos, pérdida de información, mala distribución del tiempo y falta de seguimiento. 
 
@@ -9,7 +12,7 @@ Hoy en día, muchos estudiantes tienen dificultades para organizar sus tareas y 
 
 ### 💻 Plataforma elegida
 
-El desarrollo se enfocará en una **aplicación web**, accesible desde cualquier navegador, sin necesidad de instalación. Esto permite que los estudiantes gestionen sus tareas y proyectos desde distintos dispositivos y lugares, favoreciendo el trabajo remoto y colaborativo.
+El desarrollo se enfocará en una **aplicación web** trabajada con HTML, PHP y CSS, accesible desde cualquier navegador, sin necesidad de instalación. Esto permite que los estudiantes gestionen sus tareas y proyectos desde distintos dispositivos y lugares, favoreciendo el trabajo remoto y colaborativo.
 
 En futuras versiones, se podría evaluar el desarrollo de una **aplicación móvil** para ampliar el acceso y facilitar el uso desde smartphones o tablets.
 
@@ -17,6 +20,9 @@ En futuras versiones, se podría evaluar el desarrollo de una **aplicación móv
 
 # *Thesina project - Bruno and Liendo*
 ## *Task and project management platform* 
+
+### 👻 Description of the project
+The project is a Classroom and Drive style web application where you can create projects in which you can create tasks to be done, give them deadlines, invite collaborators to the project, assign them tasks and other multiple functions to manage the tasks and projects of the students in a more comfortable and organised way.
 
 ### 🧩 Problem solved by the application
 
@@ -26,7 +32,7 @@ Nowadays, many students find it difficult to organise their tasks and projects e
 
 ### 💻 Chosen platform
 
-The development will focus on a **web application**, accessible from any browser, with no installation required. This allows students to manage their tasks and projects from different devices and locations, favouring remote and collaborative work.
+The development will focus on a **web application** worked with HTML, PHP y CSS, accessible from any browser, with no installation required. This allows students to manage their tasks and projects from different devices and locations, favouring remote and collaborative work.
 
 In future versions, the development of a **mobile application** could be evaluated to extend access and facilitate use from smartphones or tablets.
 
@@ -35,3 +41,9 @@ In future versions, the development of a **mobile application** could be evaluat
 ### Integrantes / members:
 ### Mateo Bruno Barberon - 48068748 - mbrunobarberon@escuelasproa.edu.ar -
 ### Santiago Nicolas liendo - 48671247 - snliendo@escuelasproa.edu.ar - 
+
+### Docente asesor / advisory teacher: 
+### Bonzano Blas - bbonzano@escuelasproa.edu.ar
+
+### Drive Carpeta / Drive File:
+https://drive.google.com/drive/folders/1WpxwWaLnxy0Ijp9ENfDgMsROwvwXk7Xw?usp=sharing
