@@ -1,0 +1,128 @@
+/* static/styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+:root{
+  --naranja: #FF7A00;
+  --naranja-osc: #e86b00;
+  --beige: #FFE5CC;
+  --negro: #000000;
+  --blanco: #FFFFFF;
+}
+
+* { box-sizing: border-box; margin:0; padding:0; }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: var(--blanco);
+  color: #222;
+  line-height: 1.4;
+}
+
+/* Header */
+.site-header {
+  background: var(--naranja);
+  border-bottom: 2px solid var(--negro);
+  padding: 10px 0;
+}
+.header-inner {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display:flex;
+  align-items:center;
+  gap: 20px;
+}
+.logo {
+  height: 60px;
+  width: 60px;
+  object-fit: contain;
+  border: 2px solid var(--negro);
+  background: var(--blanco);
+  border-radius: 6px;
+}
+.titulo {
+  flex:1;
+  text-align:center;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border: 3px solid var(--negro);
+  padding: 6px;
+  max-width: 400px;
+  margin: 0 auto;
+  background: transparent;
+}
+
+/* Contenedor central */
+.container {
+  width: 85%;
+  max-width: 900px;
+  margin: 28px auto;
+}
+
+/* Tarjetas */
+.card {
+  background: var(--naranja);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 22px;
+  border: 2px solid var(--negro);
+  color: var(--negro);
+}
+
+.card h2 {
+  margin-bottom: 12px;
+}
+
+/* Formularios */
+.form label {
+  display:block;
+  text-align:left;
+  margin: 8px 0 4px;
+}
+.form input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #222;
+}
+
+/* Botones */
+button {
+  margin-top: 12px;
+  background: var(--blanco);
+  color: var(--negro);
+  border: 2px solid var(--negro);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor:pointer;
+}
+button:hover { background: var(--beige); }
+
+/* Mensajes flash */
+.flash-area { margin-bottom: 10px; }
+.flash { padding: 8px; margin-bottom: 6px; border-radius: 4px; }
+.flash.success { background: #d4edda; color: #155724; }
+.flash.danger { background: #f8d7da; color: #721c24; }
+.flash.warning { background: #fff3cd; color: #856404; }
+.flash.info { background: #d1ecf1; color: #0c5460; }
+
+/* Dashboard */
+.welcome h2 { margin-bottom: 10px; }
+.stats ul { list-style: none; padding-left:0; margin: 12px 0; text-align:left; }
+.stats li { padding: 6px 0; }
+
+/* Footer */
+.site-footer {
+  text-align:center;
+  padding: 12px 0;
+  border-top: 1px solid #ddd;
+  margin-top: 30px;
+  color: #666;
+}
+
+/* Pequeños ajustes responsivos */
+@media (max-width:600px){
+  .header-inner { flex-direction: column; gap: 8px; }
+  .titulo { font-size: 20px; max-width: 100%; }
+}

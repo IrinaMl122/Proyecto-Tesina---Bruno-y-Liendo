@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Registrarse - Gestor{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>📝 REGISTRARSE</h2>
+
+    <form method="POST" action="{{ url_for('register') }}" class="form">
+      <label>👤 Nombre completo</label>
+      <input type="text" name="nombre" placeholder="Tu nombre" required>
+
+      <label>📧 Correo electrónico</label>
+      <input type="email" name="email" placeholder="tu@email.com" required>
+
+      <label>🔒 Contraseña</label>
+      <input type="password" name="password" placeholder="Contraseña" required>
+
+      <label>🔒 Repetir contraseña</label>
+      <input type="password" name="confirm_password" placeholder="Repetir contraseña" required>
+
+      <button type="submit">Crear cuenta</button>
+    </form>
+
+    <p class="small">¿Ya tenés cuenta? <a href="{{ url_for('login') }}">Iniciar sesión</a></p>
+  </div>
+{% endblock %}
