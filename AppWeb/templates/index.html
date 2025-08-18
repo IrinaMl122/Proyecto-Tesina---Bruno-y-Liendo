@@ -2,14 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi App{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<img src="{{ url_for('static', filename='img/mudkip.png') }}" alt="Mudkip">
+    <title>Gestor de Tareas - Inicio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
+        <img src="{{ url_for('static', filename='mudkip.png') }}" alt="Logo">
         <h1>Gestor de Tareas</h1>
         <nav>
             <a href="{{ url_for('login') }}">Login</a> |
@@ -20,7 +18,8 @@
     </header>
 
     <main>
-        {% block content %}{% endblock %}
+        <h2>Página principal</h2>
+        <p>Bienvenido al gestor de tareas.</p>
     </main>
 </body>
 </html>
