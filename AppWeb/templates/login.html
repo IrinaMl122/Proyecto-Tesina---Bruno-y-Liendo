@@ -1,20 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Iniciar sesión - Gestor{% endblock %}
+
+{% block title %}Login{% endblock %}
 
 {% block content %}
-  <div class="card">
-    <h2>🔐 INICIO DE SESIÓN</h2>
+<h2>Iniciar sesión</h2>
+<form method="POST">
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
 
-    <form method="POST" action="{{ url_for('login') }}" class="form">
-      <label>👤 Usuario (email)</label>
-      <input type="email" name="email" placeholder="tu@email.com" required>
+    <label>Contraseña:</label><br>
+    <input type="password" name="password" required><br><br>
 
-      <label>🔒 Contraseña</label>
-      <input type="password" name="password" placeholder="Contraseña" required>
-
-      <button type="submit">Iniciar sesión</button>
-    </form>
-
-    <p class="small">¿No tenés cuenta? <a href="{{ url_for('register') }}">Registrate</a></p>
-  </div>
+    <button type="submit">Ingresar</button>
+</form>
+<p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Regístrate aquí</a></p>
 {% endblock %}

@@ -1,7 +1,3 @@
-print("DEBUG: main.py se está ejecutando")
-import sys
-print("DEBUG: Python:", sys.version)
-
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
@@ -10,7 +6,7 @@ import MySQLdb.cursors
 app = Flask(__name__)
 app.secret_key = '4806MS'   
 
-# Configuración MySQL (ajustá según tu XAMPP)
+# Configuración MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''  
@@ -19,7 +15,11 @@ app.config['MYSQL_DB'] = 'gestor_tareas'
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')

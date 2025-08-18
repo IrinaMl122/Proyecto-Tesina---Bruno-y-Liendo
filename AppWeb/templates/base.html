@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi App{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        header { margin-bottom: 20px; }
+        nav a { margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Gestor de Tareas</h1>
+        <nav>
+            <a href="{{ url_for('login') }}">Login</a> |
+            <a href="{{ url_for('register') }}">Registro</a> |
+            <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+            <a href="{{ url_for('logout') }}">Salir</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
