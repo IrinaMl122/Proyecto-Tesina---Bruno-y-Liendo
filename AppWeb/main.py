@@ -4,12 +4,12 @@ from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
 
 app = Flask(__name__)
-app.secret_key = '4806MS'   
+app.secret_key = ''   
 
 # Configuración MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''  
+app.config['MYSQL_PASSWORD'] = 'admin123'  
 app.config['MYSQL_DB'] = 'gestor_tareas'
 
 mysql = MySQL(app)
@@ -48,6 +48,8 @@ def register():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
 
+        print(f"Datos recibidos: {nombre}, {email}, {password}, {confirm_password}")
+
         if not (nombre and email and password and confirm_password):
             flash('Completá todos los campos', 'warning')
             return redirect(url_for('register'))
@@ -56,19 +58,24 @@ def register():
             flash('Las contraseñas no coinciden', 'warning')
             return redirect(url_for('register'))
 
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
-        account = cursor.fetchone()
-        if account:
-            flash('El correo ya está registrado', 'danger')
-            return redirect(url_for('register'))
+        try:
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
+            account = cursor.fetchone()
+            if account:
+                flash('El correo ya está registrado', 'danger')
+                return redirect(url_for('register'))
 
-        pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-        cursor.execute('INSERT INTO usuarios (nombre, email, password) VALUES (%s, %s, %s)',
-                       (nombre, email, pw_hash))
-        mysql.connection.commit()
-        flash('Registro exitoso. Ya podes iniciar sesión.', 'success')
-        return redirect(url_for('login'))
+            pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+            print(f"Hash generado: {pw_hash}")
+            cursor.execute('INSERT INTO usuarios (nombre, email, password) VALUES (%s, %s, %s)', (nombre, email, pw_hash))
+            mysql.connection.commit()
+            flash('Registro exitoso. Ya podes iniciar sesión.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            print(f"Error en el registro: {e}")
+            flash('Error interno al registrar usuario.', 'danger')
+            return redirect(url_for('register'))
 
     return render_template('register.html')
 
