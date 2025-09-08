@@ -74,6 +74,59 @@ body {
   margin-bottom: 12px;
 }
 
+/* Recuadro con líneas decorativas tipo maqueta */
+.panel {
+  position: relative;
+  border: 2px solid var(--negro);
+  background: var(--naranja);
+  color: var(--negro);
+  border-radius: 12px;
+  padding: 18px 18px 24px;
+  margin: 22px auto;
+  max-width: 900px;
+  overflow: hidden;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+}
+.panel::before,
+.panel::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--negro);
+}
+.panel::before { top: 54px; }
+.panel::after { bottom: 18px; }
+
+.panel .panel-inner {
+  border: 2px solid var(--negro);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(255,255,255,0.05);
+}
+
+.panel .panel-title {
+  display: inline-block;
+  font-weight: 700;
+  margin: 0 auto 10px;
+  padding: 4px 12px;
+  border: 3px solid var(--negro);
+}
+
+/* Botón con micro-animación */
+.btn-primary {
+  background: var(--blanco);
+  color: var(--negro);
+  border: 2px solid var(--negro);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .08s ease, background .15s ease;
+}
+.btn-primary:hover { background: var(--beige); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
 /* Formularios */
 .form label {
   display:block;

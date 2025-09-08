@@ -1,16 +1,20 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<img src="{{ url_for('static', filename='img/mudkip.png') }}">
+{% extends 'base.html' %}
 
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h2>Bienvenido al Dashboard</h2>
-<p>Aquí podrás gestionar tus tareas.</p>
+<section class="card welcome">
+  <h2>Hola {{ nombre or 'usuario' }} 👋</h2>
+  <p>Aquí podrás gestionar tus tareas.</p>
+</section>
 
-<ul>
-    <li>Tarea 1</li>
-    <li>Tarea 2</li>
-    <li>Tarea 3</li>
-</ul>
+<section class="card stats">
+  <h3>Resumen</h3>
+  <ul>
+    <li>Proyectos activos: 3</li>
+    <li>Tareas completadas: 15</li>
+    <li>Tareas pendientes: 5</li>
+    <li>Próxima entrega: 15/06/2025</li>
+  </ul>
+  <p><a href="#">Ver mis proyectos</a> | <a href="#">Crear nuevo proyecto</a> | <a href="#">Ver calendario</a></p>
 {% endblock %}

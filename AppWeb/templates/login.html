@@ -1,19 +1,19 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<img src="{{ url_for('static', filename='img/mudkip.png') }}">
+{% extends 'base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Inicio de sesión{% endblock %}
 
 {% block content %}
-<h2>Iniciar sesión</h2>
-<form method="POST">
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
+<section class="card">
+  <h2>Inicio de sesión</h2>
+  <form method="POST" class="form">
+      <label>Email</label>
+      <input type="email" name="email" required>
 
-    <label>Contraseña:</label><br>
-    <input type="password" name="password" required><br><br>
+      <label>Contraseña</label>
+      <input type="password" name="password" required>
 
-    <button type="submit">Ingresar</button>
-</form>
-<p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Regístrate aquí</a></p>
+      <button type="submit">Iniciar sesión</button>
+  </form>
+  <p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Regístrate aquí</a></p>
+</section>
 {% endblock %}

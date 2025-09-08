@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ESCALOR{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
+    <script defer src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <img class="logo" src="{{ url_for('static', filename='img/mudkip.png') }}" alt="Logo">
+            <h1 class="titulo">ESCALOR</h1>
+            <nav>
+                <a href="{{ url_for('index') }}">Inicio</a>
+                |
+                {% if session.get('loggedin') %}
+                    <a href="{{ url_for('logout') }}">Salir</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Inicio de sesión</a>
+                    |
+                    <a href="{{ url_for('register') }}">Registro</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="flash-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <small>© {{ 2025 }} ESCALOR</small>
+    </footer>
+</body>
+</html>
+
