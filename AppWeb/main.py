@@ -2,6 +2,8 @@ from flask import Flask, render_template, render_template_string, request, redir
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
+import os
+import secrets
 
 app = Flask(__name__, static_folder='static', template_folder='templates', static_url_path='/static')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # desactivar caché de estáticos
@@ -13,7 +15,9 @@ def add_header(response):
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     return response
-app.secret_key = ''   
+# SECRET_KEY para sesiones y flashing
+# Usa variable de entorno si está definida, de lo contrario genera una clave segura en runtime.
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY') or os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 
 # Configuración MySQL
 app.config['MYSQL_HOST'] = 'localhost'
