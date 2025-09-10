@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Proyectos{% endblock %}
+
+{% block content %}
+<section class="card">
+  <div class="header-actions">
+    <h2>📁 Mis Proyectos</h2>
+    <a href="{{ url_for('crear_proyecto') }}" class="btn-primary">+ Nuevo Proyecto</a>
+  </div>
+
+  {% if proyectos %}
+    <div class="projects-grid">
+      {% for proyecto in proyectos %}
+      <div class="project-card">
+        <div class="project-header">
+          <h3>{{ proyecto.titulo }}</h3>
+          <span class="status-badge status-{{ proyecto.estado.replace(' ', '_') }}">
+            {% if proyecto.estado == 'en proceso' %}🚀 En Proceso
+            {% elif proyecto.estado == 'realizado' %}✅ Realizado
+            {% elif proyecto.estado == 'cancelado' %}❌ Cancelado
+            {% endif %}
+          </span>
+        </div>
+        
+        {% if proyecto.descripcion %}
+        <p class="project-description">{{ proyecto.descripcion }}</p>
+        {% endif %}
+        
+        <div class="project-details">
+          <div class="detail-item">
+            <strong>Estado:</strong>
+            <span class="status-text">
+              {% if proyecto.estado == 'en proceso' %}En Proceso
+              {% elif proyecto.estado == 'realizado' %}Realizado
+              {% elif proyecto.estado == 'cancelado' %}Cancelado
+              {% endif %}
+            </span>
+          </div>
+          
+          <div class="detail-item">
+            <strong>Creado:</strong> {{ proyecto.fecha_creacion.strftime('%d/%m/%Y') if proyecto.fecha_creacion else 'No disponible' }}
+          </div>
+        </div>
+        
+        <div class="project-actions">
+          <form method="POST" action="{{ url_for('cambiar_estado', proyecto_id=proyecto.id) }}" style="display: inline;">
+            <select name="estado" onchange="this.form.submit()" class="status-select">
+              <option value="en proceso" {% if proyecto.estado == 'en proceso' %}selected{% endif %}>🚀 En Proceso</option>
+              <option value="realizado" {% if proyecto.estado == 'realizado' %}selected{% endif %}>✅ Realizado</option>
+              <option value="cancelado" {% if proyecto.estado == 'cancelado' %}selected{% endif %}>❌ Cancelado</option>
+            </select>
+          </form>
+          <a href="#" class="btn-small">Ver Detalles</a>
+          <a href="#" class="btn-small btn-secondary">Editar</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h3>📭 No tienes proyectos aún</h3>
+      <p>Crea tu primer proyecto para comenzar a organizar tu trabajo.</p>
+      <a href="{{ url_for('crear_proyecto') }}" class="btn-primary">Crear Primer Proyecto</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

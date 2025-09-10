@@ -3,27 +3,22 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-  <section class="panel">
-    <div class="panel-inner">
-      <h2 class="panel-title" style="text-align:center;">🔐 INICIO DE SESIÓN</h2>
-      <div class="form" style="text-align:center;">
-        <a href="{{ url_for('login') }}">
-          <button class="btn-primary" type="button">Iniciar sesión</button>
-        </a>
-      </div>
-    </div>
-  </section>
+<section class="card welcome">
+  <h2>¡Bienvenido a ESCALOR! 👋</h2>
+  <p>Gestiona tus proyectos de manera eficiente y organizada.</p>
+</section>
 
-  <section class="panel">
-    <div class="panel-inner">
-      <h2 class="panel-title" style="text-align:center;">🆕 REGISTRARSE</h2>
-      <div class="form" style="text-align:center;">
-        <a href="{{ url_for('register') }}">
-          <button class="btn-primary" type="button">Crear cuenta</button>
-        </a>
-      </div>
-    </div>
-  </section>
+<section class="card">
+  <h3>🔐 Iniciar Sesión</h3>
+  <div class="form" style="text-align:center;">
+    <a href="{{ url_for('login') }}"><button class="btn-primary" type="button">Iniciar sesión</button></a>
+  </div>
+</section>
+
+<section class="card">
+  <h3>🆕 Registrarse</h3>
+  <div class="form" style="text-align:center;">
+    <a href="{{ url_for('register') }}"><button class="btn-primary" type="button">Crear cuenta</button></a>
+  </div>
+</section>
 {% endblock %}
-
-

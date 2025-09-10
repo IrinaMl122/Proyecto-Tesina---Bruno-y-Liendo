@@ -5,16 +5,56 @@
 {% block content %}
 <section class="card welcome">
   <h2>Hola {{ nombre or 'usuario' }} 👋</h2>
-  <p>Aquí podrás gestionar tus tareas.</p>
+  <p>Aquí podrás gestionar tus proyectos y tareas.</p>
 </section>
 
 <section class="card stats">
-  <h3>Resumen</h3>
-  <ul>
-    <li>Proyectos activos: 3</li>
-    <li>Tareas completadas: 15</li>
-    <li>Tareas pendientes: 5</li>
-    <li>Próxima entrega: 15/06/2025</li>
-  </ul>
-  <p><a href="#">Ver mis proyectos</a> | <a href="#">Crear nuevo proyecto</a> | <a href="#">Ver calendario</a></p>
+  <h3>📊 Resumen</h3>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">{{ total_proyectos or 0 }}</div>
+      <div class="stat-label">Total Proyectos</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ proyectos_activos or 0 }}</div>
+      <div class="stat-label">En Proceso</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ proyectos_completados or 0 }}</div>
+      <div class="stat-label">Realizados</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">{{ proyectos_cancelados or 0 }}</div>
+      <div class="stat-label">Cancelados</div>
+    </div>
+  </div>
+</section>
+
+<section class="card actions">
+  <h3>🚀 Acciones Rápidas</h3>
+  <div class="action-buttons">
+    <a href="{{ url_for('ver_proyectos') }}" class="btn-primary">📁 Ver Mis Proyectos</a>
+    <a href="{{ url_for('crear_proyecto') }}" class="btn-secondary">➕ Crear Nuevo Proyecto</a>
+  </div>
+</section>
+
+{% if proyectos_recientes %}
+<section class="card">
+  <h3>📋 Proyectos Recientes</h3>
+  <div class="recent-projects">
+    {% for proyecto in proyectos_recientes[:3] %}
+    <div class="recent-project">
+      <h4>{{ proyecto.titulo }}</h4>
+      <span class="status-badge status-{{ proyecto.estado.replace(' ', '_') }}">
+        {% if proyecto.estado == 'en proceso' %}🚀 En Proceso
+        {% elif proyecto.estado == 'realizado' %}✅ Realizado
+        {% elif proyecto.estado == 'cancelado' %}❌ Cancelado
+        {% endif %}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  <p><a href="{{ url_for('ver_proyectos') }}">Ver todos los proyectos →</a></p>
+</section>
+{% endif %}
 {% endblock %}

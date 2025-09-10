@@ -30,57 +30,11 @@ bcrypt = Bcrypt(app)
 
 @app.route('/')
 def index():
-    html = """
-    <!DOCTYPE html>
-    <html lang=\"es\">
-    <head>
-        <meta charset=\"UTF-8\">
-        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-        <title>ESCALOR - Inicio</title>
-        <link rel=\"stylesheet\" href=\"{{ url_for('static', filename='style.css') }}?v=4\">
-    </head>
-    <body>
-        <header class=\"site-header\">
-            <div class=\"header-inner\"> 
-                <img class=\"logo\" src=\"{{ url_for('static', filename='img/mudkip.png') }}\" alt=\"Logo\"> 
-                <h1 class=\"titulo\">ESCALOR</h1>
-                <nav>
-                    <a href=\"{{ url_for('index') }}\">Inicio</a> |
-                    {% if session.get('loggedin') %}
-                        <a href=\"{{ url_for('logout') }}\">Salir</a>
-                    {% else %}
-                        <a href=\"{{ url_for('login') }}\">Inicio de sesión</a> |
-                        <a href=\"{{ url_for('register') }}\">Registro</a>
-                    {% endif %}
-                </nav>
-            </div>
-        </header>
-
-        <main class=\"container\">
-            <section class=\"panel\">
-                <div class=\"panel-inner\">
-                    <h2 class=\"panel-title\" style=\"text-align:center;\">🔐 INICIO DE SESIÓN</h2>
-                    <div class=\"form\" style=\"text-align:center;\">
-                        <a href=\"{{ url_for('login') }}\"><button class=\"btn-primary\" type=\"button\">Iniciar sesión</button></a>
-                    </div>
-                </div>
-            </section>
-
-            <section class=\"panel\">
-                <div class=\"panel-inner\">
-                    <h2 class=\"panel-title\" style=\"text-align:center;\">🆕 REGISTRARSE</h2>
-                    <div class=\"form\" style=\"text-align:center;\">
-                        <a href=\"{{ url_for('register') }}\"><button class=\"btn-primary\" type=\"button\">Crear cuenta</button></a>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class=\"site-footer\"><small>© 2025 ESCALOR</small></footer>
-    </body>
-    </html>
-    """
-    return render_template_string(html)
+    # Si el usuario está logueado, redirigir al dashboard
+    if 'loggedin' in session:
+        return redirect(url_for('dashboard'))
+    
+    return render_template('index.html')
 
 @app.route('/home')
 def home():
@@ -150,8 +104,103 @@ def register():
 @app.route('/dashboard')
 def dashboard():
     if 'loggedin' in session:
-        return render_template('dashboard.html', nombre=session.get('nombre'))
+        user_id = session.get('id')
+        
+        # Obtener estadísticas de proyectos
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        
+        # Contar proyectos en proceso
+        cursor.execute('SELECT COUNT(*) as count FROM proyectos WHERE usuario_id = %s AND estado = "en proceso"', (user_id,))
+        proyectos_activos = cursor.fetchone()['count']
+        
+        # Contar proyectos realizados
+        cursor.execute('SELECT COUNT(*) as count FROM proyectos WHERE usuario_id = %s AND estado = "realizado"', (user_id,))
+        proyectos_completados = cursor.fetchone()['count']
+        
+        # Contar proyectos cancelados
+        cursor.execute('SELECT COUNT(*) as count FROM proyectos WHERE usuario_id = %s AND estado = "cancelado"', (user_id,))
+        proyectos_cancelados = cursor.fetchone()['count']
+        
+        # Total de proyectos
+        cursor.execute('SELECT COUNT(*) as count FROM proyectos WHERE usuario_id = %s', (user_id,))
+        total_proyectos = cursor.fetchone()['count']
+        
+        # Obtener proyectos recientes
+        cursor.execute('SELECT titulo, estado, fecha_creacion FROM proyectos WHERE usuario_id = %s ORDER BY fecha_creacion DESC LIMIT 5', (user_id,))
+        proyectos_recientes = cursor.fetchall()
+        
+        return render_template('dashboard.html', 
+                             nombre=session.get('nombre'),
+                             proyectos_activos=proyectos_activos,
+                             proyectos_completados=proyectos_completados,
+                             proyectos_cancelados=proyectos_cancelados,
+                             total_proyectos=total_proyectos,
+                             proyectos_recientes=proyectos_recientes)
     return redirect(url_for('login'))
+
+@app.route('/crear_proyecto', methods=['GET', 'POST'])
+def crear_proyecto():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        descripcion = request.form.get('descripcion')
+        
+        if not titulo:
+            flash('El título es obligatorio', 'warning')
+            return redirect(url_for('crear_proyecto'))
+        
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('''INSERT INTO proyectos (usuario_id, titulo, descripcion, estado, fecha_creacion) 
+                         VALUES (%s, %s, %s, 'en proceso', NOW())''', 
+                      (session.get('id'), titulo, descripcion or None))
+        mysql.connection.commit()
+        
+        flash('Proyecto creado exitosamente', 'success')
+        return redirect(url_for('ver_proyectos'))
+    
+    return render_template('crear_proyecto.html')
+
+@app.route('/ver_proyectos')
+def ver_proyectos():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('''SELECT * FROM proyectos WHERE usuario_id = %s 
+                     ORDER BY fecha_creacion DESC''', (session.get('id'),))
+    proyectos = cursor.fetchall()
+    
+    return render_template('ver_proyectos.html', proyectos=proyectos)
+
+@app.route('/cambiar_estado/<int:proyecto_id>', methods=['POST'])
+def cambiar_estado(proyecto_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    
+    nuevo_estado = request.form.get('estado')
+    
+    if not nuevo_estado or nuevo_estado not in ['en proceso', 'realizado', 'cancelado']:
+        flash('Estado inválido', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # Verificar que el proyecto pertenece al usuario
+    cursor.execute('SELECT id FROM proyectos WHERE id = %s AND usuario_id = %s', (proyecto_id, session.get('id')))
+    proyecto = cursor.fetchone()
+    
+    if not proyecto:
+        flash('Proyecto no encontrado', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    
+    # Actualizar el estado
+    cursor.execute('UPDATE proyectos SET estado = %s WHERE id = %s AND usuario_id = %s', 
+                  (nuevo_estado, proyecto_id, session.get('id')))
+    mysql.connection.commit()
+    
+    flash(f'Estado cambiado a: {nuevo_estado.title()}', 'success')
+    return redirect(url_for('ver_proyectos'))
 
 @app.route('/logout')
 def logout():

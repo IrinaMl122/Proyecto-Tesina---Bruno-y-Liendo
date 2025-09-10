@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Proyecto{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>📝 Crear Nuevo Proyecto</h2>
+  <form method="POST" class="form">
+    <div class="form-group">
+      <label for="titulo">Título del Proyecto *</label>
+      <input type="text" id="titulo" name="titulo" required placeholder="Ej: Sistema de Gestión de Tareas">
+    </div>
+
+    <div class="form-group">
+      <label for="descripcion">Descripción (Opcional)</label>
+      <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describe brevemente el proyecto..."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Crear Proyecto</button>
+      <a href="{{ url_for('ver_proyectos') }}" class="btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
