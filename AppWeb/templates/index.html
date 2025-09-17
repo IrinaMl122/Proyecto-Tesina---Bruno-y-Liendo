@@ -3,22 +3,21 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-<section class="card welcome">
+<section class="card welcome centered">
   <h2>¡Bienvenido a ESCALOR! 👋</h2>
   <p>Gestiona tus proyectos de manera eficiente y organizada.</p>
 </section>
 
-<section class="card">
-  <h3>🔐 Iniciar Sesión</h3>
+<section class="card centered">
   <div class="form" style="text-align:center;">
-    <a href="{{ url_for('login') }}"><button class="btn-primary" type="button">Iniciar sesión</button></a>
+    <a href="{{ url_for('login') }}"><button class="btn-primary btn-cta" type="button">Iniciar sesión</button></a>
   </div>
+  
 </section>
 
-<section class="card">
-  <h3>🆕 Registrarse</h3>
+<section class="card centered">
   <div class="form" style="text-align:center;">
-    <a href="{{ url_for('register') }}"><button class="btn-primary" type="button">Crear cuenta</button></a>
+    <a href="{{ url_for('register') }}"><button class="btn-primary btn-cta" type="button">Registrarse</button></a>
   </div>
 </section>
 {% endblock %}

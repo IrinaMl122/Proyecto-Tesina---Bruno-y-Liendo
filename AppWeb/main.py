@@ -30,10 +30,7 @@ bcrypt = Bcrypt(app)
 
 @app.route('/')
 def index():
-    # Si el usuario está logueado, redirigir al dashboard
-    if 'loggedin' in session:
-        return redirect(url_for('dashboard'))
-    
+    # Siempre mostrar la página de inicio, sin redirigir automáticamente
     return render_template('index.html')
 
 @app.route('/home')
@@ -45,9 +42,9 @@ def home():
 def legacy_style():
     return send_from_directory('static', 'styles.css')
 
-@app.route('/mudkip.png')
-def legacy_mudkip():
-    return send_from_directory('static/img', 'mudkip.png')
+@app.route('/image.png')
+def legacy_logo():
+    return send_from_directory('static/img', 'image.png')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -136,7 +133,78 @@ def dashboard():
                              proyectos_cancelados=proyectos_cancelados,
                              total_proyectos=total_proyectos,
                              proyectos_recientes=proyectos_recientes)
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
+
+# Configuración de cuenta
+@app.route('/configuracion', methods=['GET'])
+def configuracion():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT id, nombre, email FROM usuarios WHERE id = %s', (session.get('id'),))
+    usuario = cursor.fetchone()
+    return render_template('configuracion.html', usuario=usuario)
+
+@app.route('/configuracion/actualizar_perfil', methods=['POST'])
+def actualizar_perfil():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    nombre = request.form.get('nombre')
+    email = request.form.get('email')
+    if not nombre or not email:
+        flash('Nombre y email son obligatorios', 'warning')
+        return redirect(url_for('configuracion'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # Verificar email duplicado en otro usuario
+    cursor.execute('SELECT id FROM usuarios WHERE email = %s AND id <> %s', (email, session.get('id')))
+    existe = cursor.fetchone()
+    if existe:
+        flash('El email ya está en uso por otro usuario', 'danger')
+        return redirect(url_for('configuracion'))
+    cursor.execute('UPDATE usuarios SET nombre = %s, email = %s WHERE id = %s', (nombre, email, session.get('id')))
+    mysql.connection.commit()
+    session['nombre'] = nombre
+    flash('Perfil actualizado', 'success')
+    return redirect(url_for('configuracion'))
+
+@app.route('/configuracion/cambiar_contrasena', methods=['POST'])
+def cambiar_contrasena():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    actual = request.form.get('password_actual')
+    nueva = request.form.get('password_nueva')
+    confirm = request.form.get('password_confirm')
+    if not (actual and nueva and confirm):
+        flash('Completá todos los campos', 'warning')
+        return redirect(url_for('configuracion'))
+    if nueva != confirm:
+        flash('La confirmación no coincide', 'danger')
+        return redirect(url_for('configuracion'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT password FROM usuarios WHERE id = %s', (session.get('id'),))
+    row = cursor.fetchone()
+    if not row or not bcrypt.check_password_hash(row['password'], actual):
+        flash('La contraseña actual es incorrecta', 'danger')
+        return redirect(url_for('configuracion'))
+    pw_hash = bcrypt.generate_password_hash(nueva).decode('utf-8')
+    cursor.execute('UPDATE usuarios SET password = %s WHERE id = %s', (pw_hash, session.get('id')))
+    mysql.connection.commit()
+    flash('Contraseña actualizada', 'success')
+    return redirect(url_for('configuracion'))
+
+@app.route('/configuracion/borrar_cuenta', methods=['POST'])
+def borrar_cuenta():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    user_id = session.get('id')
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # Eliminar datos asociados (ej.: proyectos) antes del usuario
+    cursor.execute('DELETE FROM proyectos WHERE usuario_id = %s', (user_id,))
+    cursor.execute('DELETE FROM usuarios WHERE id = %s', (user_id,))
+    mysql.connection.commit()
+    session.clear()
+    flash('Cuenta eliminada correctamente', 'info')
+    return redirect(url_for('index'))
 
 @app.route('/crear_proyecto', methods=['GET', 'POST'])
 def crear_proyecto():

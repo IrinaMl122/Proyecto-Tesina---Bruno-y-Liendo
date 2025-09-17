@@ -10,14 +10,18 @@
 <body>
     <header class="site-header">
         <div class="header-inner">
-            <img class="logo" src="{{ url_for('static', filename='img/mudkip.png') }}" alt="Logo">
+            <img class="logo" src="{{ url_for('static', filename='img/image.png') }}" alt="Logo">
             <h1 class="titulo">ESCALOR</h1>
             <nav>
-                <a href="{{ url_for('index') }}">Inicio</a>
-                |
                 {% if session.get('loggedin') %}
+                    <a href="{{ url_for('dashboard') }}">Inicio</a>
+                    |
+                    <a href="{{ url_for('configuracion') }}">Configuración</a>
+                    |
                     <a href="{{ url_for('logout') }}">Salir</a>
                 {% else %}
+                    <a href="{{ url_for('index') }}">Inicio</a>
+                    |
                     <a href="{{ url_for('login') }}">Inicio de sesión</a>
                     |
                     <a href="{{ url_for('register') }}">Registro</a>

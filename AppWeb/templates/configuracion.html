@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Configuración de la cuenta</h2>
+  <form method="POST" action="{{ url_for('actualizar_perfil') }}" class="form" autocomplete="off">
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" name="nombre" value="{{ session.get('nombre') }}" required autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" value="{{ usuario.email }}" required autocomplete="off">
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Guardar cambios</button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Cambiar contraseña</h2>
+  <form method="POST" action="{{ url_for('cambiar_contrasena') }}" class="form" autocomplete="off">
+    <div class="form-group password-field">
+      <label>Contraseña actual</label>
+      <input id="pwd_actual" type="password" name="password_actual" required autocomplete="current-password">
+      <button type="button" class="password-toggle" aria-label="Mostrar contraseña" data-target="#pwd_actual">
+        <img class="icon-eye" src="{{ url_for('static', filename='img/ojoabierto.png') }}" alt="Mostrar contraseña" width="18" height="18">
+        <img class="icon-eye-off" src="{{ url_for('static', filename='img/ojocerrado.png') }}" alt="Ocultar contraseña" width="18" height="18">
+      </button>
+    </div>
+    <div class="form-group password-field">
+      <label>Nueva contraseña</label>
+      <input id="pwd_nueva" type="password" name="password_nueva" required autocomplete="new-password">
+      <button type="button" class="password-toggle" aria-label="Mostrar contraseña" data-target="#pwd_nueva">
+        <img class="icon-eye" src="{{ url_for('static', filename='img/ojoabierto.png') }}" alt="Mostrar contraseña" width="18" height="18">
+        <img class="icon-eye-off" src="{{ url_for('static', filename='img/ojocerrado.png') }}" alt="Ocultar contraseña" width="18" height="18">
+      </button>
+    </div>
+    <div class="form-group password-field">
+      <label>Confirmar nueva contraseña</label>
+      <input id="pwd_confirm" type="password" name="password_confirm" required autocomplete="new-password">
+      <button type="button" class="password-toggle" aria-label="Mostrar contraseña" data-target="#pwd_confirm">
+        <img class="icon-eye" src="{{ url_for('static', filename='img/ojoabierto.png') }}" alt="Mostrar contraseña" width="18" height="18">
+        <img class="icon-eye-off" src="{{ url_for('static', filename='img/ojocerrado.png') }}" alt="Ocultar contraseña" width="18" height="18">
+      </button>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Actualizar contraseña</button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Eliminar cuenta</h2>
+  <form method="POST" action="{{ url_for('borrar_cuenta') }}" class="form" onsubmit="return confirm('¿Seguro que deseas borrar esta cuenta? Esta acción no se puede deshacer.');">
+    <div class="form-actions">
+      <button type="submit" class="btn-secondary">Borrar cuenta</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+
