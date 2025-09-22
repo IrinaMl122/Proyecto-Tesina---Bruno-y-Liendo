@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar tarea{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Editar tarea</h2>
+  <form method="POST" class="form">
+    <div class="form-group">
+      <label>Título</label>
+      <input type="text" name="titulo" required value="{{ tarea.titulo }}" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea name="descripcion">{{ tarea.descripcion or '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Fecha límite</label>
+      <input type="date" name="fecha_limite" value="{{ tarea.fecha_limite.strftime('%Y-%m-%d') if tarea.fecha_limite else '' }}">
+    </div>
+    <div class="form-group">
+      <label>Estado</label>
+      <select name="estado" class="status-select">
+        <option value="pendiente" {% if tarea.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+        <option value="en proceso" {% if tarea.estado == 'en proceso' %}selected{% endif %}>En proceso</option>
+        <option value="realizado" {% if tarea.estado == 'realizado' %}selected{% endif %}>Realizado</option>
+        <option value="cancelado" {% if tarea.estado == 'cancelado' %}selected{% endif %}>Cancelado</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Guardar</button>
+      <a href="{{ url_for('tareas_por_proyecto', proyecto_id=tarea.proyecto_id) }}" class="btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+

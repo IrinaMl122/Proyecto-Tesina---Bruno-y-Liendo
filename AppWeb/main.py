@@ -198,7 +198,9 @@ def borrar_cuenta():
         return redirect(url_for('login'))
     user_id = session.get('id')
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    # Eliminar datos asociados (ej.: proyectos) antes del usuario
+    # Eliminar datos asociados (tareas de los proyectos del usuario) antes de borrar proyectos
+    cursor.execute('DELETE t FROM tareas t JOIN proyectos p ON p.id = t.proyecto_id WHERE p.usuario_id = %s', (user_id,))
+    # Luego eliminar proyectos del usuario y finalmente el usuario
     cursor.execute('DELETE FROM proyectos WHERE usuario_id = %s', (user_id,))
     cursor.execute('DELETE FROM usuarios WHERE id = %s', (user_id,))
     mysql.connection.commit()
@@ -269,6 +271,106 @@ def cambiar_estado(proyecto_id):
     
     flash(f'Estado cambiado a: {nuevo_estado.title()}', 'success')
     return redirect(url_for('ver_proyectos'))
+
+@app.route('/eliminar_proyecto/<int:proyecto_id>', methods=['POST'])
+def eliminar_proyecto(proyecto_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # Verificar pertenencia
+    cursor.execute('SELECT id FROM proyectos WHERE id = %s AND usuario_id = %s', (proyecto_id, session.get('id')))
+    proyecto = cursor.fetchone()
+    if not proyecto:
+        flash('Proyecto no encontrado', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    # Eliminar tareas asociadas y luego el proyecto
+    cursor.execute('DELETE FROM tareas WHERE proyecto_id = %s', (proyecto_id,))
+    cursor.execute('DELETE FROM proyectos WHERE id = %s', (proyecto_id,))
+    mysql.connection.commit()
+    flash('Proyecto eliminado', 'info')
+    return redirect(url_for('ver_proyectos'))
+
+# ------------------ TAREAS POR PROYECTO ------------------
+@app.route('/proyectos/<int:proyecto_id>/tareas')
+def tareas_por_proyecto(proyecto_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # validar pertenencia
+    cursor.execute('SELECT id, titulo FROM proyectos WHERE id = %s AND usuario_id = %s', (proyecto_id, session.get('id')))
+    proyecto = cursor.fetchone()
+    if not proyecto:
+        flash('Proyecto no encontrado', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    cursor.execute('SELECT id, titulo, descripcion, fecha_limite, estado FROM tareas WHERE proyecto_id = %s ORDER BY id DESC', (proyecto_id,))
+    tareas = cursor.fetchall()
+    return render_template('tareas.html', proyecto=proyecto, tareas=tareas)
+
+@app.route('/proyectos/<int:proyecto_id>/tareas/crear', methods=['POST'])
+def crear_tarea(proyecto_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    titulo = request.form.get('titulo')
+    descripcion = request.form.get('descripcion') or None
+    fecha_limite = request.form.get('fecha_limite') or None
+    if not titulo:
+        flash('El título es obligatorio', 'warning')
+        return redirect(url_for('tareas_por_proyecto', proyecto_id=proyecto_id))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT id FROM proyectos WHERE id = %s AND usuario_id = %s', (proyecto_id, session.get('id')))
+    if not cursor.fetchone():
+        flash('Proyecto no encontrado', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    cursor.execute('INSERT INTO tareas (proyecto_id, titulo, descripcion, fecha_limite, estado) VALUES (%s, %s, %s, %s, %s)', (proyecto_id, titulo, descripcion, fecha_limite, 'pendiente'))
+    mysql.connection.commit()
+    flash('Tarea creada', 'success')
+    return redirect(url_for('tareas_por_proyecto', proyecto_id=proyecto_id))
+
+@app.route('/tareas/<int:tarea_id>/editar', methods=['GET', 'POST'])
+def editar_tarea(tarea_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('''SELECT t.*, p.usuario_id FROM tareas t
+                      JOIN proyectos p ON p.id = t.proyecto_id
+                      WHERE t.id = %s''', (tarea_id,))
+    tarea = cursor.fetchone()
+    if not tarea or tarea['usuario_id'] != session.get('id'):
+        flash('Tarea no encontrada', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        descripcion = request.form.get('descripcion') or None
+        fecha_limite = request.form.get('fecha_limite') or None
+        estado = request.form.get('estado')
+        if not titulo:
+            flash('El título es obligatorio', 'warning')
+            return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+        if estado not in ['pendiente', 'en proceso', 'realizado', 'cancelado']:
+            flash('Estado inválido', 'danger')
+            return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+        cursor.execute('UPDATE tareas SET titulo=%s, descripcion=%s, fecha_limite=%s, estado=%s WHERE id=%s', (titulo, descripcion, fecha_limite, estado, tarea_id))
+        mysql.connection.commit()
+        flash('Tarea actualizada', 'success')
+        return redirect(url_for('tareas_por_proyecto', proyecto_id=tarea['proyecto_id']))
+    return render_template('editar_tarea.html', tarea=tarea)
+
+@app.route('/tareas/<int:tarea_id>/eliminar', methods=['POST'])
+def eliminar_tarea(tarea_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('''SELECT t.id, t.proyecto_id, p.usuario_id FROM tareas t
+                      JOIN proyectos p ON p.id = t.proyecto_id
+                      WHERE t.id = %s''', (tarea_id,))
+    row = cursor.fetchone()
+    if not row or row['usuario_id'] != session.get('id'):
+        flash('Tarea no encontrada', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    cursor.execute('DELETE FROM tareas WHERE id = %s', (tarea_id,))
+    mysql.connection.commit()
+    flash('Tarea eliminada', 'info')
+    return redirect(url_for('tareas_por_proyecto', proyecto_id=row['proyecto_id']))
 
 @app.route('/logout')
 def logout():
