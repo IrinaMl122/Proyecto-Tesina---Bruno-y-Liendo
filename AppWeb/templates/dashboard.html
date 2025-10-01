@@ -43,7 +43,7 @@
   <h3>📋 Proyectos Recientes</h3>
   <div class="recent-projects">
     {% for proyecto in proyectos_recientes[:3] %}
-    <div class="recent-project">
+    <a class="recent-project" href="{{ url_for('tareas_por_proyecto', proyecto_id=proyecto.id) }}" style="text-decoration:none; color: inherit;">
       <h4>{{ proyecto.titulo }}</h4>
       <span class="status-badge status-{{ proyecto.estado.replace(' ', '_') }}">
         {% if proyecto.estado == 'en proceso' %}🚀 En Proceso
@@ -51,7 +51,7 @@
         {% elif proyecto.estado == 'cancelado' %}❌ Cancelado
         {% endif %}
       </span>
-    </div>
+    </a>
     {% endfor %}
   </div>
   <p><a href="{{ url_for('ver_proyectos') }}">Ver todos los proyectos →</a></p>

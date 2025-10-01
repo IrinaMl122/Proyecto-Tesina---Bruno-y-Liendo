@@ -1,9 +1,10 @@
-from flask import Flask, render_template, render_template_string, request, redirect, url_for, session, flash, send_from_directory
+from flask import Flask, render_template, render_template_string, request, redirect, url_for, session, flash, send_from_directory, send_file
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
 import os
 import secrets
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_folder='static', template_folder='templates', static_url_path='/static')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # desactivar caché de estáticos
@@ -18,6 +19,17 @@ def add_header(response):
 # SECRET_KEY para sesiones y flashing
 # Usa variable de entorno si está definida, de lo contrario genera una clave segura en runtime.
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY') or os.environ.get('SECRET_KEY') or secrets.token_hex(32)
+
+# Archivos adjuntos
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOADS_PATH = os.path.join(BASE_DIR, 'uploads')
+os.makedirs(UPLOADS_PATH, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOADS_PATH
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB por archivo
+ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif','pdf','doc','docx','xls','xlsx','txt','csv','zip'])
+
+def is_allowed_file(filename: str):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Configuración MySQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -122,8 +134,8 @@ def dashboard():
         cursor.execute('SELECT COUNT(*) as count FROM proyectos WHERE usuario_id = %s', (user_id,))
         total_proyectos = cursor.fetchone()['count']
         
-        # Obtener proyectos recientes
-        cursor.execute('SELECT titulo, estado, fecha_creacion FROM proyectos WHERE usuario_id = %s ORDER BY fecha_creacion DESC LIMIT 5', (user_id,))
+        # Obtener proyectos recientes (incluir id para enlaces)
+        cursor.execute('SELECT id, titulo, estado, fecha_creacion FROM proyectos WHERE usuario_id = %s ORDER BY fecha_creacion DESC LIMIT 5', (user_id,))
         proyectos_recientes = cursor.fetchall()
         
         return render_template('dashboard.html', 
@@ -353,7 +365,12 @@ def editar_tarea(tarea_id):
         mysql.connection.commit()
         flash('Tarea actualizada', 'success')
         return redirect(url_for('tareas_por_proyecto', proyecto_id=tarea['proyecto_id']))
-    return render_template('editar_tarea.html', tarea=tarea)
+    # GET: cargar comentarios y adjuntos
+    cursor.execute('SELECT c.id, c.contenido, c.fecha_creacion, u.nombre FROM comentarios c JOIN usuarios u ON u.id = c.usuario_id WHERE c.tarea_id = %s ORDER BY c.fecha_creacion DESC', (tarea_id,))
+    comentarios = cursor.fetchall()
+    cursor.execute('SELECT id, original_nombre, filename, mime, tamano, fecha_subida FROM adjuntos WHERE tarea_id = %s ORDER BY id DESC', (tarea_id,))
+    adjuntos = cursor.fetchall()
+    return render_template('editar_tarea.html', tarea=tarea, comentarios=comentarios, adjuntos=adjuntos)
 
 @app.route('/tareas/<int:tarea_id>/eliminar', methods=['POST'])
 def eliminar_tarea(tarea_id):
@@ -367,10 +384,98 @@ def eliminar_tarea(tarea_id):
     if not row or row['usuario_id'] != session.get('id'):
         flash('Tarea no encontrada', 'danger')
         return redirect(url_for('ver_proyectos'))
+    # eliminar adjuntos de disco y bd
+    cursor.execute('SELECT filename FROM adjuntos WHERE tarea_id = %s', (tarea_id,))
+    files = cursor.fetchall()
+    for f in files or []:
+        try:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], f['filename']))
+        except Exception:
+            pass
+    cursor.execute('DELETE FROM adjuntos WHERE tarea_id = %s', (tarea_id,))
+    cursor.execute('DELETE FROM comentarios WHERE tarea_id = %s', (tarea_id,))
     cursor.execute('DELETE FROM tareas WHERE id = %s', (tarea_id,))
     mysql.connection.commit()
     flash('Tarea eliminada', 'info')
     return redirect(url_for('tareas_por_proyecto', proyecto_id=row['proyecto_id']))
+
+# -------- Comentarios de tareas --------
+@app.route('/tareas/<int:tarea_id>/comentarios/crear', methods=['POST'])
+def crear_comentario(tarea_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    contenido = request.form.get('contenido')
+    if not contenido:
+        flash('El comentario no puede estar vacío', 'warning')
+        return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('''INSERT INTO comentarios (tarea_id, usuario_id, contenido) VALUES (%s, %s, %s)''', (tarea_id, session.get('id'), contenido))
+    mysql.connection.commit()
+    flash('Comentario agregado', 'success')
+    return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+
+# -------- Adjuntos de tareas --------
+@app.route('/tareas/<int:tarea_id>/adjuntos/subir', methods=['POST'])
+def subir_adjunto(tarea_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    file = request.files.get('archivo')
+    if not file or file.filename == '':
+        flash('Seleccioná un archivo', 'warning')
+        return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+    if not is_allowed_file(file.filename):
+        flash('Tipo de archivo no permitido', 'danger')
+        return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+    original = file.filename
+    safe = secure_filename(original)
+    unique_name = f"{tarea_id}_{secrets.token_hex(8)}_{safe}"
+    dest_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
+    file.save(dest_path)
+    tamano = os.path.getsize(dest_path)
+    mime = file.mimetype
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('INSERT INTO adjuntos (tarea_id, filename, original_nombre, mime, tamano) VALUES (%s,%s,%s,%s,%s)', (tarea_id, unique_name, original, mime, tamano))
+    mysql.connection.commit()
+    flash('Archivo subido', 'success')
+    return redirect(url_for('editar_tarea', tarea_id=tarea_id))
+
+@app.route('/adjuntos/<int:adjunto_id>/descargar')
+def descargar_adjunto(adjunto_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('''SELECT a.filename, a.original_nombre, p.usuario_id FROM adjuntos a
+                      JOIN tareas t ON t.id = a.tarea_id
+                      JOIN proyectos p ON p.id = t.proyecto_id
+                      WHERE a.id = %s''', (adjunto_id,))
+    row = cursor.fetchone()
+    if not row or row['usuario_id'] != session.get('id'):
+        flash('Archivo no encontrado', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    path = os.path.join(app.config['UPLOAD_FOLDER'], row['filename'])
+    return send_file(path, as_attachment=True, download_name=row['original_nombre'])
+
+@app.route('/adjuntos/<int:adjunto_id>/eliminar', methods=['POST'])
+def eliminar_adjunto(adjunto_id):
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('''SELECT a.id, a.filename, t.proyecto_id, p.usuario_id, t.id as tarea_id FROM adjuntos a
+                      JOIN tareas t ON t.id = a.tarea_id
+                      JOIN proyectos p ON p.id = t.proyecto_id
+                      WHERE a.id = %s''', (adjunto_id,))
+    row = cursor.fetchone()
+    if not row or row['usuario_id'] != session.get('id'):
+        flash('Archivo no encontrado', 'danger')
+        return redirect(url_for('ver_proyectos'))
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], row['filename']))
+    except Exception:
+        pass
+    cursor.execute('DELETE FROM adjuntos WHERE id = %s', (adjunto_id,))
+    mysql.connection.commit()
+    flash('Archivo eliminado', 'info')
+    return redirect(url_for('editar_tarea', tarea_id=row['tarea_id']))
 
 @app.route('/logout')
 def logout():

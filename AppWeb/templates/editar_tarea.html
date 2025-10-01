@@ -33,6 +33,59 @@
     </div>
   </form>
 </section>
+<section class="card">
+  <h2>Comentarios</h2>
+  <form method="POST" action="{{ url_for('crear_comentario', tarea_id=tarea.id) }}" class="form" autocomplete="off">
+    <div class="form-group">
+      <label>Nuevo comentario</label>
+      <textarea name="contenido" required></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Publicar</button>
+    </div>
+  </form>
+  {% if comentarios %}
+    <div class="project-details">
+      {% for c in comentarios %}
+        <div class="detail-item">
+          <strong>{{ c.nombre }}</strong>
+          <span>{{ c.contenido }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+  <div class="empty-state">
+    <p>Sin comentarios aún.</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Adjuntos</h2>
+  <form method="POST" action="{{ url_for('subir_adjunto', tarea_id=tarea.id) }}" class="form" enctype="multipart/form-data">
+    <div class="form-group">
+      <input type="file" name="archivo" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Subir archivo</button>
+    </div>
+  </form>
+  {% if adjuntos %}
+  <div class="project-details">
+    {% for a in adjuntos %}
+      <div class="detail-item">
+        <a href="{{ url_for('descargar_adjunto', adjunto_id=a.id) }}">{{ a.original_nombre }}</a>
+        <form method="POST" action="{{ url_for('eliminar_adjunto', adjunto_id=a.id) }}" style="display:inline" onsubmit="return confirm('¿Eliminar archivo?');">
+          <button type="submit" class="btn-small btn-secondary">Eliminar</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><p>Sin archivos adjuntos.</p></div>
+  {% endif %}
+</section>
 {% endblock %}
+
 
 
