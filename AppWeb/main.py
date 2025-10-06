@@ -58,14 +58,20 @@ def legacy_style():
 def legacy_logo():
     return send_from_directory('static/img', 'image.png')
 
+# Easter egg: página con trono y mudkip
+@app.route('/easter-egg')
+def easter_egg():
+    return render_template('easter_egg.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        identificador = request.form.get('identificador')
         password_candidate = request.form.get('password')
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
+        # Permitir login por email o por nombre de usuario
+        cursor.execute('SELECT * FROM usuarios WHERE email = %s OR nombre = %s', (identificador, identificador))
         account = cursor.fetchone()
 
         if account and bcrypt.check_password_hash(account['password'], password_candidate):
@@ -75,7 +81,7 @@ def login():
             flash('Has iniciado sesión correctamente.', 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('Usuario o contraseña incorrectos', 'danger')
+            flash('Usuario/email o contraseña incorrectos', 'danger')
 
     return render_template('login.html')
 
@@ -134,8 +140,13 @@ def dashboard():
         cursor.execute('SELECT COUNT(*) as count FROM proyectos WHERE usuario_id = %s', (user_id,))
         total_proyectos = cursor.fetchone()['count']
         
-        # Obtener proyectos recientes (incluir id para enlaces)
-        cursor.execute('SELECT id, titulo, estado, fecha_creacion FROM proyectos WHERE usuario_id = %s ORDER BY fecha_creacion DESC LIMIT 5', (user_id,))
+        # Obtener proyectos pendientes/en proceso únicamente (excluir realizados y cancelados)
+        cursor.execute('''
+            SELECT id, titulo, estado, fecha_creacion
+            FROM proyectos
+            WHERE usuario_id = %s AND (estado = "en proceso" OR estado = "pendiente" OR estado IS NULL)
+            ORDER BY fecha_creacion DESC LIMIT 5
+        ''', (user_id,))
         proyectos_recientes = cursor.fetchall()
         
         return render_template('dashboard.html', 

@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ESCALOR{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=6">
     <script defer src="{{ url_for('static', filename='script.js') }}?v=2"></script>
 </head>
 <body>
     <header class="site-header">
         <div class="header-inner">
-            <a href="{{ url_for('static', filename='img/mudkip.png') }}" target="_blank" rel="noopener noreferrer"><img class="logo" src="{{ url_for('static', filename='img/image.png') }}" alt="Logo"></a>
+            <a href="{{ url_for('easter_egg') }}" target="_blank" rel="noopener noreferrer"><img class="logo" src="{{ url_for('static', filename='img/image.png') }}" alt="Logo"></a>
             <h1 class="titulo">ESCALOR</h1>
             <nav>
                 {% if session.get('loggedin') %}

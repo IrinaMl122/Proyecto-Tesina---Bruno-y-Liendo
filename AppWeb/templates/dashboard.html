@@ -40,7 +40,7 @@
 
 {% if proyectos_recientes %}
 <section class="card">
-  <h3>📋 Proyectos Recientes</h3>
+  <h3>📋 Proyectos Pendientes</h3>
   <div class="recent-projects">
     {% for proyecto in proyectos_recientes[:3] %}
     <a class="recent-project" href="{{ url_for('tareas_por_proyecto', proyecto_id=proyecto.id) }}" style="text-decoration:none; color: inherit;">

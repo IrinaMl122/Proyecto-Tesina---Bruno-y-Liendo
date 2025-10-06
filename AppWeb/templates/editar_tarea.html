@@ -45,11 +45,14 @@
     </div>
   </form>
   {% if comentarios %}
-    <div class="project-details">
+    <div class="comments-list">
       {% for c in comentarios %}
-        <div class="detail-item">
-          <strong>{{ c.nombre }}</strong>
-          <span>{{ c.contenido }}</span>
+        <div class="comment-item">
+          <div class="comment-header">
+            <strong class="comment-author">{{ c.nombre }}</strong>
+            <span class="comment-date">{{ c.fecha_creacion }}</span>
+          </div>
+          <div class="comment-content">{{ c.contenido }}</div>
         </div>
       {% endfor %}
     </div>
@@ -61,7 +64,7 @@
 </section>
 
 <section class="card">
-  <h2>Adjuntos</h2>
+  <h2>Adjuntos <small class="hint">(máx. 16 MB)</small></h2>
   <form method="POST" action="{{ url_for('subir_adjunto', tarea_id=tarea.id) }}" class="form" enctype="multipart/form-data">
     <div class="form-group">
       <input type="file" name="archivo" required>

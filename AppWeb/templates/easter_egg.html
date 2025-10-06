@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 Mudkip en el trono</title>
+    <style>
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        background: #000 url("{{ url_for('static', filename='img/imagentrono.jpg') }}") center center / cover no-repeat fixed;
+        display: grid;
+        place-items: center;
+      }
+      .mudkip {
+        width: min(55vmin, 520px);
+        filter: drop-shadow(0 12px 20px rgba(0,0,0,.55));
+        animation: pop .6s ease-out;
+      }
+      @keyframes pop { from { transform: translateY(8px) scale(.98); opacity:.6; } to { transform: translateY(0) scale(1); opacity:1; } }
+      .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+    </style>
+</head>
+<body>
+  <h1 class="sr-only">Mudkip en el trono</h1>
+  <img class="mudkip" src="{{ url_for('static', filename='img/mudkip.png') }}" alt="Mudkip en el trono">
+</body>
+</html>
+
+

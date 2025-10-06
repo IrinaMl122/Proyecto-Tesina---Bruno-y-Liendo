@@ -1,9 +1,12 @@
 /* static/styles.css */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap');
 
 :root{
-  --naranja: #FF7A00;
-  --naranja-osc: #e86b00;
+  /* Paleta ajustada a la cabecera naranja */
+  --naranja: #F7861A;   /* principal UI */
+  --naranja-osc: #D86F0E;/* acentos/bordes sobre naranja */
+  --naranja-claro: #FFB768; /* resaltes suaves */
+  --header-ink: #1b1208;    /* texto sobre cabecera */
   --beige: #FFE5CC;
   --negro: #000000;
   --blanco: #FFFFFF;
@@ -12,8 +15,13 @@
 * { box-sizing: border-box; margin:0; padding:0; }
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  background: var(--blanco);
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background-color: var(--blanco);
+  background-image: url('./img/imagenfondoblanco.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: top center;
   color: #222;
   line-height: 1.4;
 }
@@ -38,10 +46,11 @@ main.container {
 
 /* Header */
 .site-header {
-  background: var(--naranja);
+  background: linear-gradient(rgba(255, 153, 51, .10), rgba(0,0,0,.08)), url('./img/imagenfondonaranja.webp') center/cover no-repeat;
   border-bottom: 2px solid var(--negro);
   padding: 10px 0;
   transition: box-shadow .2s ease, transform .15s ease;
+  color: var(--header-ink);
 }
 .header-inner {
   width: 90%;
@@ -54,7 +63,7 @@ main.container {
 .header-inner nav a {
   position: relative;
   text-decoration: none;
-  color: #111;
+  color: var(--header-ink);
   padding: 2px 4px;
   transition: color .15s ease;
 }
@@ -80,11 +89,15 @@ main.container {
   background: var(--blanco);
   border-radius: 6px;
 }
+h1, h2, h3, .titulo {
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
 .titulo {
   flex:1;
   text-align:center;
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   letter-spacing: 2px;
   border: 3px solid var(--negro);
   padding: 6px;
@@ -117,6 +130,8 @@ main.container {
 .card h2 {
   margin-bottom: 12px;
 }
+
+.hint { font-weight: normal; font-size: .8em; color: #111; }
 
 /* Centrado de tarjetas del inicio */
 .centered {
@@ -534,6 +549,8 @@ button:active { transform: translateY(0); box-shadow: 0 1px 0 rgba(0,0,0,0.10); 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  /* En móviles, fondo con scroll para mejor rendimiento */
+  body { background-attachment: scroll; }
   
   .projects-grid {
     grid-template-columns: 1fr;
@@ -557,6 +574,34 @@ button:active { transform: translateY(0); box-shadow: 0 1px 0 rgba(0,0,0,0.10); 
     justify-content: center;
   }
 }
+
+/* Comentarios: recuadros blancos dentro de tarjetas */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.comment-item {
+  background: var(--blanco);
+  border: 2px solid var(--negro);
+  border-radius: 8px;
+  padding: 12px;
+  color: #222;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.10);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.comment-author { font-weight: 700; }
+.comment-date { font-size: 0.85em; color: #666; }
+.comment-content { white-space: pre-wrap; }
 
 /* Footer */
 .site-footer {
