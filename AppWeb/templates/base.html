@@ -10,7 +10,7 @@
 <body>
     <header class="site-header">
         <div class="header-inner">
-            <img class="logo" src="{{ url_for('static', filename='img/image.png') }}" alt="Logo">
+            <a href="{{ url_for('static', filename='img/mudkip.png') }}" target="_blank" rel="noopener noreferrer"><img class="logo" src="{{ url_for('static', filename='img/image.png') }}" alt="Logo"></a>
             <h1 class="titulo">ESCALOR</h1>
             <nav>
                 {% if session.get('loggedin') %}
