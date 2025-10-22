@@ -20,6 +20,12 @@ def add_header(response):
 # Usa variable de entorno si está definida, de lo contrario genera una clave segura en runtime.
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY') or os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 
+# Configuración de sesiones
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hora
+app.config['SESSION_COOKIE_SECURE'] = False  # Para desarrollo local
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 # Archivos adjuntos
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOADS_PATH = os.path.join(BASE_DIR, 'uploads')
@@ -490,9 +496,25 @@ def eliminar_adjunto(adjunto_id):
 
 @app.route('/logout')
 def logout():
+    # Limpiar completamente la sesión
     session.clear()
-    flash('Sesión cerrada', 'info')
-    return redirect(url_for('login'))
+    # Eliminar todas las cookies de sesión
+    session.permanent = False
+    flash('Sesión cerrada correctamente', 'info')
+    return redirect(url_for('index'))
+
+
+# Función para limpiar sesión expirada
+@app.before_request
+def check_session():
+    # Si hay una sesión pero no está válida, limpiarla
+    if 'loggedin' in session:
+        # Verificar que el usuario aún existe en la base de datos
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT id FROM usuarios WHERE id = %s', (session.get('id'),))
+        if not cursor.fetchone():
+            session.clear()
+            session.permanent = False
 
 if __name__ == '__main__':
     app.run(debug=True)

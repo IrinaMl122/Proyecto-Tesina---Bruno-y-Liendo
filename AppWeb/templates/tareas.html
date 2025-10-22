@@ -5,7 +5,7 @@
 {% block content %}
 <section class="card">
   <div class="header-actions">
-    <h2>📝 Tareas de "{{ proyecto.titulo }}"</h2>
+    <h2>📝 Crear nueva tarea</h2>
     <a href="{{ url_for('ver_proyectos') }}" class="btn-secondary">← Volver a proyectos</a>
   </div>
 
@@ -29,7 +29,7 @@
 </section>
 
 <section class="card">
-  <h3>Listado</h3>
+  <h3>📋 Tareas del proyecto "{{ proyecto.titulo }}"</h3>
   {% if tareas %}
   <div class="projects-grid">
     {% for t in tareas %}

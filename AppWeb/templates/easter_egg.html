@@ -16,14 +16,50 @@
         width: min(55vmin, 520px);
         filter: drop-shadow(0 12px 20px rgba(0,0,0,.55));
         animation: pop .6s ease-out;
+        position: relative;
+      }
+      .crown {
+        position: absolute;
+        top: -4.56%;
+        left: 37%;
+        transform: translateX(-50%);
+        font-size: 11.66em;
+        color: #FFD700;
+        text-shadow: 
+          0 0 20px rgba(255, 215, 0, 0.9),
+          0 0 30px rgba(255, 215, 0, 0.7),
+          0 0 40px rgba(255, 215, 0, 0.5),
+          0 0 50px rgba(255, 215, 0, 0.3);
+        animation: crown-glow 2s ease-in-out infinite alternate;
+        z-index: 10;
+        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
       }
       @keyframes pop { from { transform: translateY(8px) scale(.98); opacity:.6; } to { transform: translateY(0) scale(1); opacity:1; } }
+      @keyframes crown-glow { 
+        from { 
+          text-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.9),
+            0 0 30px rgba(255, 215, 0, 0.7),
+            0 0 40px rgba(255, 215, 0, 0.5),
+            0 0 50px rgba(255, 215, 0, 0.3);
+        } 
+        to { 
+          text-shadow: 
+            0 0 25px rgba(255, 215, 0, 1),
+            0 0 35px rgba(255, 215, 0, 0.8),
+            0 0 45px rgba(255, 215, 0, 0.6),
+            0 0 55px rgba(255, 215, 0, 0.4);
+        } 
+      }
       .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
     </style>
 </head>
 <body>
   <h1 class="sr-only">Mudkip en el trono</h1>
-  <img class="mudkip" src="{{ url_for('static', filename='img/mudkip.png') }}" alt="Mudkip en el trono">
+  <div class="mudkip">
+    <div class="crown">♔</div>
+    <img src="{{ url_for('static', filename='img/mudkip.png') }}" alt="Mudkip en el trono" style="width: 100%; height: auto;">
+  </div>
 </body>
 </html>
 

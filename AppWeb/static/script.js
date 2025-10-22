@@ -5,8 +5,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetSelector = btn.getAttribute('data-target');
       const input = document.querySelector(targetSelector);
       if (!input) return;
+      
       const isPassword = input.getAttribute('type') === 'password';
       input.setAttribute('type', isPassword ? 'text' : 'password');
+      
+      // Cambiar la imagen del botón
+      const img = btn.querySelector('img');
+      if (img) {
+        if (isPassword) {
+          // Mostrar contraseña - cambiar a ojo cerrado
+          img.src = img.src.replace('ojoabierto', 'ojocerrado');
+          img.alt = 'Ocultar contraseña';
+        } else {
+          // Ocultar contraseña - cambiar a ojo abierto
+          img.src = img.src.replace('ojocerrado', 'ojoabierto');
+          img.alt = 'Mostrar contraseña';
+        }
+      }
+      
       btn.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
       btn.classList.toggle('is-revealed', isPassword);
     });
