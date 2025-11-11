@@ -43,15 +43,25 @@
   <h3>📋 Proyectos Pendientes</h3>
   <div class="recent-projects">
     {% for proyecto in proyectos_recientes[:3] %}
-    <a class="recent-project" href="{{ url_for('tareas_por_proyecto', proyecto_id=proyecto.id) }}" style="text-decoration:none; color: inherit;">
-      <h4>{{ proyecto.titulo }}</h4>
+    <div class="recent-project" style="gap: 10px;">
+      <a href="{{ url_for('tareas_por_proyecto', proyecto_id=proyecto.id) }}" style="text-decoration:none; color: inherit; flex:1;">
+        <h4 style="margin:0;">{{ proyecto.titulo }}</h4>
+      </a>
       <span class="status-badge status-{{ proyecto.estado.replace(' ', '_') }}">
         {% if proyecto.estado == 'en proceso' %}🚀 En Proceso
         {% elif proyecto.estado == 'realizado' %}✅ Realizado
         {% elif proyecto.estado == 'cancelado' %}❌ Cancelado
         {% endif %}
       </span>
-    </a>
+      <form method="POST" action="{{ url_for('cambiar_estado', proyecto_id=proyecto.id) }}" style="display:inline; margin-left:6px;">
+        <input type="hidden" name="estado" value="realizado">
+        <button type="submit" class="btn-small">Marcar realizado</button>
+      </form>
+      <form method="POST" action="{{ url_for('cambiar_estado', proyecto_id=proyecto.id) }}" style="display:inline; margin-left:6px;">
+        <input type="hidden" name="estado" value="cancelado">
+        <button type="submit" class="btn-small btn-secondary">Cancelar</button>
+      </form>
+    </div>
     {% endfor %}
   </div>
   <p><a href="{{ url_for('ver_proyectos') }}">Ver todos los proyectos →</a></p>
